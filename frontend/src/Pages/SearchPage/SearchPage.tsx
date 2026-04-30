@@ -41,11 +41,11 @@ const SearchPage = (props: Props) => {
     e.preventDefault();
     const result = await SearchCompanies(search);
     //setServerError(result.data);
-    if (typeof result === "string") {
-      setServerError(result);
-    } else if (Array.isArray(result.data)) {
-      setSearchResult(result.data);
-    }
+if (typeof result === "string") {
+  setServerError(result);
+} else if (Array.isArray(result)) {
+  setSearchResult(result);
+}
   };
   return (
     <>

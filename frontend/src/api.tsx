@@ -1,5 +1,5 @@
 import axios from "axios"
-import { CompanySearch } from "./company"
+import { CompanySearch, CompanyProfile } from "./company"
 
 
 export interface SearchResponse{
@@ -22,4 +22,17 @@ export const SearchCompanies = async (query: string) => {
             return "An unexpected error has occurred";
         }
     }
-}
+};
+
+
+export const getCompanyProfile = async (query: string) => {
+  try {
+    const response = await axios.get(
+      `https://api.twelvedata.com/quote?symbol=${query}&apikey=${process.env.REACT_APP_API_KEY}`
+    );
+
+    return response.data; 
+  } catch (error: any) {
+    console.log("error message: ", error.message);
+  }
+};
