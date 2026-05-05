@@ -1,46 +1,33 @@
 import React, { useEffect, useState } from "react";
+import { CompanyProfile } from "../../company";
 import { useParams } from "react-router-dom";
 import { getCompanyProfile } from "../../api";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import CompanyDashboard from "../../Components/CompanyDashboard/CompanyDashboard";
 import Tile from "../../Components/Tile/Tile";
-import { Outlet } from "react-router-dom";
 
-interface Props { }
+interface Props {}
 
 const CompanyPage = (props: Props) => {
   let { ticker } = useParams();
 
-  const [company, setCompany] = useState<any>();
+  const [company, setCompany] = useState<CompanyProfile>();
 
   useEffect(() => {
-      console.log("ticker:", ticker);
     const getProfileInit = async () => {
-      try {
-        // pega apenas o símbolo (remove o -EXCHANGE)
-        const symbolOnly = ticker?.split("-")[0];
-
-        const result = await getCompanyProfile(symbolOnly!);
-
-        if (result) {
-          setCompany(result.data);
-        }
-      } catch (error) {
-        console.log("Erro ao buscar empresa:", error);
-      }
+      const result = await getCompanyProfile(ticker!);
+      setCompany(result?.data);
     };
-
     getProfileInit();
-  }, [ticker]);
+  }, []);
 
   return (
     <>
       {company ? (
         <div className="w-full relative flex ct-docs-disable-sidebar-content overflow-x-hidden">
           <Sidebar />
-          <CompanyDashboard>
+          <CompanyDashboard ticker={ticker!}>
             <Tile title="Company Name" subTitle={company.companyName} />
-            <Outlet />
           </CompanyDashboard>
         </div>
       ) : (

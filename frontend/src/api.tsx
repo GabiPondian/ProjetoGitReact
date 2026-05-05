@@ -1,6 +1,10 @@
 import axios from "axios"
-import { CompanySearch, CompanyProfile } from "./company"
-
+import {
+  CompanyKeyMetrics,
+  CompanyKeyRatios,
+  CompanyProfile,
+  CompanySearch,
+} from "./company";
 
 export interface SearchResponse{
     data: CompanySearch[];
@@ -26,6 +30,19 @@ export const getCompanyProfile = async (query: string) => {
     );
 
     return response.data; 
+  } catch (error: any) {
+    console.log("error message: ", error.message);
+  }
+};
+
+
+export const getKeyMetrics = async (symbol: string) => {
+  try {
+    const response = await axios.get(
+      `https://api.twelvedata.com/quote?symbol=${symbol}&apikey=${process.env.REACT_APP_API_KEY}`
+    );
+
+    return response.data;
   } catch (error: any) {
     console.log("error message: ", error.message);
   }
