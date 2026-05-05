@@ -1,8 +1,8 @@
 import axios from "axios"
 import {
+  CompanyBalanceSheet,
   CompanyIncomeStatement,
   CompanyKeyMetrics,
-  CompanyKeyRatios,
   CompanyProfile,
   CompanySearch,
 } from "./company";
@@ -50,13 +50,25 @@ export const getKeyMetrics = async (symbol: string) => {
 };
 
 
-export const getIncomeStatement = async (symbol: string) => {
+export const getIncomeStatement = async (query: string) => {
   try {
-    const response = await axios.get(
-      `https://api.twelvedata.com/fundamentals?symbol=${symbol}&apikey=${process.env.REACT_APP_API_KEY}`
+    const data = await axios.get(
+      `https://api.twelvedata.com/fundamentals?symbol=${query}&apikey=${process.env.REACT_APP_API_KEY}`
     );
 
-    return response.data;
+    return data.data?.income_statement?.annual || [];
+  } catch (error: any) {
+    console.log("error message: ", error.message);
+  }
+};
+
+export const getBalanceSheet = async (query: string) => {
+  try {
+    const data = await axios.get(
+      `https://api.twelvedata.com/fundamentals?symbol=${query}&apikey=${process.env.REACT_APP_API_KEY}`
+    );
+
+    return data.data?.balance_sheet?.annual || [];
   } catch (error: any) {
     console.log("error message: ", error.message);
   }

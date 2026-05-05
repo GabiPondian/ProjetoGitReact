@@ -1,5 +1,3 @@
-import React from "react";
-import { TestDataCompany } from "../Table/testData";
 
 type Props = {
   config: any;
