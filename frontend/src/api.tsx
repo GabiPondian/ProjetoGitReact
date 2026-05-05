@@ -1,6 +1,7 @@
 import axios from "axios"
 import {
   CompanyBalanceSheet,
+  CompanyCashFlow,
   CompanyIncomeStatement,
   CompanyKeyMetrics,
   CompanyProfile,
@@ -69,6 +70,18 @@ export const getBalanceSheet = async (query: string) => {
     );
 
     return data.data?.balance_sheet?.annual || [];
+  } catch (error: any) {
+    console.log("error message: ", error.message);
+  }
+};
+
+export const getCashFlow = async (query: string) => {
+  try {
+    const data = await axios.get(
+      `https://api.twelvedata.com/fundamentals?symbol=${query}&apikey=${process.env.REACT_APP_API_KEY}`
+    );
+
+    return data.data?.cash_flow?.annual || [];
   } catch (error: any) {
     console.log("error message: ", error.message);
   }
