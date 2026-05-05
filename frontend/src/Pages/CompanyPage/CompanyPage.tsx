@@ -4,6 +4,7 @@ import { getCompanyProfile } from "../../api";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import CompanyDashboard from "../../Components/CompanyDashboard/CompanyDashboard";
 import Tile from "../../Components/Tile/Tile";
+import { Outlet } from "react-router-dom";
 
 interface Props { }
 
@@ -13,6 +14,7 @@ const CompanyPage = (props: Props) => {
   const [company, setCompany] = useState<any>();
 
   useEffect(() => {
+      console.log("ticker:", ticker);
     const getProfileInit = async () => {
       try {
         // pega apenas o símbolo (remove o -EXCHANGE)
@@ -38,6 +40,7 @@ const CompanyPage = (props: Props) => {
           <Sidebar />
           <CompanyDashboard>
             <Tile title="Company Name" subTitle={company.companyName} />
+            <Outlet />
           </CompanyDashboard>
         </div>
       ) : (
