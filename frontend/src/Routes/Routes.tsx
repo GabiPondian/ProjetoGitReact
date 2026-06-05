@@ -5,9 +5,11 @@ import CompanyPage from "../Pages/CompanyPage/CompanyPage";
 import SearchPage from "../Pages/SearchPage/SearchPage";
 import CompanyProfile from "../Components/CompanyProfile/CompanyProfile";
 import IncomeStatement from "../Components/IncomeStatement/IncomeStatement";
-import DesignGuide from "../Components/DesignGuide/DesignGuide";
+import DesignGuide from "../Pages/DesignGuide/DesignGuide";
 import BalanceSheet from "../Components/BalanceSheet/BalanceSheet";
+import HistoricalDividend from "../Components/HistoricalDividend/HistoricalDividend";
 import CashflowStatement from "../Components/CashflowStatement/CashflowStatement";
+import LoginPage from "../Pages/LoginPage/LoginPage";
 
 export const router = createBrowserRouter([
   {
@@ -15,6 +17,7 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
       { path: "", element: <HomePage /> },
+      { path: "login", element: <LoginPage /> },
       { path: "search", element: <SearchPage /> },
       { path: "design-guide", element: <DesignGuide /> },
       {
@@ -25,6 +28,7 @@ export const router = createBrowserRouter([
           { path: "income-statement", element: <IncomeStatement /> },
           { path: "balance-sheet", element: <BalanceSheet /> },
           { path: "cashflow-statement", element: <CashflowStatement /> },
+          { path: "historical-dividend", element: <HistoricalDividend /> },
         ],
       },
     ],
