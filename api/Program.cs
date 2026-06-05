@@ -75,11 +75,13 @@ builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
-// Se existir no projeto:
-builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
+// Só deixe estas linhas se essas classes existirem
+builder.Services.AddScoped<IFMPService, FMPService>();
+builder.Services.AddHttpClient<IFMPService, FMPService>();
 
 var app = builder.Build();
 
+// Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
