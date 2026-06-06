@@ -19,7 +19,10 @@ type UserContextType = {
     username: string,
     password: string
   ) => Promise<void>;
-  loginUser: (username: string, password: string) => Promise<void>;
+  loginUser: (
+    username: string,
+    password: string
+  ) => Promise<void>;
   logout: () => void;
   isLoggedIn: () => boolean;
 };
@@ -32,19 +35,32 @@ const UserContext = createContext<UserContextType>(
   {} as UserContextType
 );
 
-export const UserProvider = ({ children }: Props) => {
+export const UserProvider = ({
+  children,
+}: Props) => {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isReady, setIsReady] = useState(false);
+  const [user, setUser] =
+    useState<UserProfile | null>(null);
+
+  const [token, setToken] =
+    useState<string | null>(null);
+
+  const [isReady, setIsReady] =
+    useState(false);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("token");
+    const storedUser =
+      localStorage.getItem("user");
+
+    const storedToken =
+      localStorage.getItem("token");
 
     if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
+      const userObj =
+        JSON.parse(storedUser);
+
+      setUser(userObj);
       setToken(storedToken);
 
       axios.defaults.headers.common[
@@ -67,31 +83,90 @@ export const UserProvider = ({ children }: Props) => {
         password
       );
 
-      if (res?.data) {
-        const userObj: UserProfile = {
-          userName: res.data.userName,
-          email: res.data.email,
-        };
+      if (!res?.data) {
+        toast.error(
+          "A API não retornou dados."
+        );
+        return;
+      }
 
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem(
-          "user",
-          JSON.stringify(userObj)
+      const userObj: UserProfile = {
+        userName: res.data.userName,
+        email: res.data.email,
+      };
+
+      localStorage.setItem(
+        "token",
+        res.data.token
+      );
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(userObj)
+      );
+
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${res.data.token}`;
+
+      setToken(res.data.token);
+      setUser(userObj);
+
+      toast.success(
+        "Cadastro realizado com sucesso!"
+      );
+
+      navigate("/search");
+    } catch (error: any) {
+      console.error(
+        "ERRO NO CADASTRO:",
+        error
+      );
+
+      if (error.response) {
+        console.log(
+          "STATUS:",
+          error.response.status
         );
 
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${res.data.token}`;
+        console.log(
+          "DATA:",
+          error.response.data
+        );
 
-        setToken(res.data.token);
-        setUser(userObj);
+        if (
+          Array.isArray(
+            error.response.data
+          )
+        ) {
+          const mensagem =
+            error.response.data
+              .map(
+                (x: any) =>
+                  x.description
+              )
+              .join(" | ");
 
-        toast.success("Cadastro realizado com sucesso!");
-        navigate("/search");
+          toast.error(mensagem);
+        } else if (
+          typeof error.response.data ===
+          "string"
+        ) {
+          toast.error(
+            error.response.data
+          );
+        } else {
+          toast.error(
+            JSON.stringify(
+              error.response.data
+            )
+          );
+        }
+      } else {
+        toast.error(
+          "Erro ao realizar cadastro."
+        );
       }
-    } catch (error) {
-      toast.error("Erro ao realizar cadastro.");
-      console.error(error);
     }
   };
 
@@ -100,33 +175,79 @@ export const UserProvider = ({ children }: Props) => {
     password: string
   ): Promise<void> => {
     try {
-      const res = await loginAPI(username, password);
+      const res = await loginAPI(
+        username,
+        password
+      );
 
-      if (res?.data) {
-        const userObj: UserProfile = {
-          userName: res.data.userName,
-          email: res.data.email,
-        };
+      if (!res?.data) {
+        toast.error(
+          "A API não retornou dados."
+        );
+        return;
+      }
 
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem(
-          "user",
-          JSON.stringify(userObj)
+      const userObj: UserProfile = {
+        userName: res.data.userName,
+        email: res.data.email,
+      };
+
+      localStorage.setItem(
+        "token",
+        res.data.token
+      );
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(userObj)
+      );
+
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${res.data.token}`;
+
+      setToken(res.data.token);
+      setUser(userObj);
+
+      toast.success(
+        "Login realizado com sucesso!"
+      );
+
+      navigate("/search");
+    } catch (error: any) {
+      console.error(
+        "ERRO NO LOGIN:",
+        error
+      );
+
+      if (error.response) {
+        console.log(
+          "STATUS:",
+          error.response.status
         );
 
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${res.data.token}`;
+        console.log(
+          "DATA:",
+          error.response.data
+        );
 
-        setToken(res.data.token);
-        setUser(userObj);
-
-        toast.success("Login realizado com sucesso!");
-        navigate("/search");
+        if (
+          typeof error.response.data ===
+          "string"
+        ) {
+          toast.error(
+            error.response.data
+          );
+        } else {
+          toast.error(
+            "Usuário ou senha inválidos."
+          );
+        }
+      } else {
+        toast.error(
+          "Erro ao realizar login."
+        );
       }
-    } catch (error) {
-      toast.error("Usuário ou senha inválidos.");
-      console.error(error);
     }
   };
 

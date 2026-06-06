@@ -75,9 +75,10 @@ builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
-// Só deixe estas linhas se essas classes existirem
-builder.Services.AddScoped<IFMPService, FMPService>();
-builder.Services.AddHttpClient<IFMPService, FMPService>();
+builder.Services.AddHttpClient<IFinnhubService, FinnhubService>(client =>
+{
+    client.BaseAddress = new Uri("https://finnhub.io/api/v1/");
+});
 
 var app = builder.Build();
 
