@@ -46,11 +46,11 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options =>
 {
+    var key = builder.Configuration["JWT:SigningKey"];
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -61,9 +61,7 @@ builder.Services.AddAuthentication(options =>
 
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(
-            System.Text.Encoding.UTF8.GetBytes(
-                builder.Configuration["JWT:SigningKey"]!
-            )
+            System.Text.Encoding.UTF8.GetBytes(key ?? "")
         )
     };
 });
@@ -73,8 +71,10 @@ builder.Services.AddAuthorization();
 // Repositories
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>(); // ✔ ADICIONADO
 builder.Services.AddScoped<ITokenService, TokenService>();
 
+// Finnhub
 builder.Services.AddHttpClient<IFinnhubService, FinnhubService>(client =>
 {
     client.BaseAddress = new Uri("https://finnhub.io/api/v1/");
@@ -92,11 +92,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors(x => x
-     .AllowAnyMethod()
-     .AllowAnyHeader()
-     .AllowCredentials()
-      //.WithOrigins("https://localhost:44351))
-      .SetIsOriginAllowed(origin => true));
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials()
+    .SetIsOriginAllowed(_ => true)
+);
 
 app.UseAuthentication();
 app.UseAuthorization();

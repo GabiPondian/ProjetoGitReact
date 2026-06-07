@@ -20,9 +20,28 @@ export const SearchCompanies = async (query: string) => {
       `https://api.twelvedata.com/symbol_search?symbol=${query}&apikey=${process.env.REACT_APP_API_KEY}`
     );
 
-    return response.data.data; // <-- aqui é o array de verdade
+    const companies: CompanySearch[] = (response.data.data || []).map(
+      (item: any) => ({
+        symbol: item.symbol || "",
+        name: item.instrument_name || item.symbol || "",
+        currency: item.currency || "",
+        exchange: item.exchange || "",
+        exchangeShortName: item.exchange || "",
+        stockExchange: item.exchange || "",
+        displaySymbol: item.symbol || "",
+        instrument_name: item.instrument_name || "",
+      })
+    );
+
+    return {
+      data: companies,
+    };
   } catch (error) {
     console.log(error);
+
+    return {
+      data: [],
+    };
   }
 };
 
